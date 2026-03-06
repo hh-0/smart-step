@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -32,11 +33,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -147,10 +151,15 @@ private fun GenderDropdownField(
     onExpandedChange: (Boolean) -> Unit,
     onOptionSelected: (String) -> Unit
 ) {
+    var rowWidth by remember { mutableIntStateOf(0) }
+
     Box {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    rowWidth = coordinates.size.width
+                }
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
@@ -185,7 +194,7 @@ private fun GenderDropdownField(
             expanded = expanded,
             onDismissRequest = { onExpandedChange(false) },
             modifier = Modifier
-                .fillMaxWidth(0.9f)
+                .width(with(LocalDensity.current) { rowWidth.toDp() })
                 .background(MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(10.dp),
             containerColor = MaterialTheme.colorScheme.surface
